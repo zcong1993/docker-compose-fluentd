@@ -1,9 +1,9 @@
 workflow "New workflow" {
   on = "push"
-  resolves = ["Docker Tag"]
+  resolves = ["GitHub Push elk"]
 }
 
-action "Docker Registry" {
+action "Docker Login" {
   uses = "actions/docker/login@aea64bb1b97c42fa69b90523667fef56b90d7cff"
   secrets = [
     "DOCKER_PASSWORD",
@@ -11,8 +11,14 @@ action "Docker Registry" {
   ]
 }
 
-action "Docker Tag" {
+action "Docker Build elk" {
   uses = "actions/docker/cli@aea64bb1b97c42fa69b90523667fef56b90d7cff"
-  needs = ["Docker Registry"]
   args = "build --build-arg FLUENTD_VERSION=v1.3-onbuild-1 -t zcong/fluentd-elk ./fluentd/efk/"
+  needs = ["Docker Login"]
+}
+
+action "GitHub Push elk" {
+  uses = "actions/docker/cli@aea64bb1b97c42fa69b90523667fef56b90d7cff"
+  args = "push zcong/fluentd-elk"
+  needs = ["Docker Build elk"]
 }

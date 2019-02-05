@@ -6,7 +6,6 @@ services:
       context: fluentd/efk/
       args:
         FLUENTD_VERSION: ${FLUENTD_VERSION}
-        FLUENTD_PLUGIN: fluent-plugin-elasticsearch
     depends_on:
       - "elasticsearch"
     ports:

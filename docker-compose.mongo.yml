@@ -1,0 +1,37 @@
+version: '2'
+services:
+
+  fluentd-mongo:
+    build:
+      context: fluentd/mongo/
+      args:
+        FLUENTD_VERSION: ${FLUENTD_VERSION}
+    depends_on:
+      - "mongo"
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    logging:
+        driver: "json-file"
+        options:
+            max-size: 100m
+            max-file: "5"
+    networks:
+      - fluentd-mongo
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - fluentd-mongo-data:/data/db
+    networks:
+      - fluentd-mongo
+
+
+networks:
+  fluentd-mongo:
+    driver: bridge
+
+volumes:
+  fluentd-mongo-data:

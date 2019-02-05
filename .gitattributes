@@ -1,2 +1,2 @@
 * text=auto
-*.rb export-ignore
+*.rb linguist-vendored

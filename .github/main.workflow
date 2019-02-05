@@ -1,8 +1,9 @@
-workflow "New workflow" {
+workflow "Docker Build and Push" {
   on = "push"
   resolves = [
     "GitHub Push elk",
     "Docker Push mongo",
+    "Docker Push loki",
   ]
 }
 
@@ -36,4 +37,16 @@ action "Docker Push mongo" {
   uses = "actions/docker/cli@aea64bb1b97c42fa69b90523667fef56b90d7cff"
   needs = ["Docker Build mongo"]
   args = "push zcong/fluentd-mongo"
+}
+
+action "Docker Build loki" {
+  uses = "actions/docker/cli@aea64bb1b97c42fa69b90523667fef56b90d7cff"
+  needs = ["Docker Login"]
+  args = "build --build-arg FLUENTD_VERSION=v1.3-onbuild-1 -t zcong/fluentd-loki ./fluentd/loki/"
+}
+
+action "Docker Push loki" {
+  uses = "actions/docker/cli@aea64bb1b97c42fa69b90523667fef56b90d7cff"
+  needs = ["Docker Build loki"]
+  args = "push zcong/fluentd-loki"
 }

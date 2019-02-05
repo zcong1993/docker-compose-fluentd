@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+
+  fluentd-efk:
+    build:
+      context: fluentd/loki/
+      args:
+        FLUENTD_VERSION: ${FLUENTD_VERSION}
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    logging:
+        driver: "json-file"
+        options:
+            max-size: 100m
+            max-file: "5"
+    networks:
+      - loki
+
+  loki:
+    image: grafana/loki:master
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - loki-data:/tmp/loki
+    networks:
+      - loki
+
+  grafana:
+    image: grafana/grafana:master
+    ports:
+      - "3000:3000"
+    networks:
+      - loki
+
+networks:
+  loki:
+
+volumes:
+  loki-data:

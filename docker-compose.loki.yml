@@ -2,7 +2,7 @@ version: "3"
 
 services:
 
-  fluentd-efk:
+  fluentd-loki:
     build:
       context: fluentd/loki/
       args:
